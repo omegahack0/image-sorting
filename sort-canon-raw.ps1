@@ -23,11 +23,11 @@ foreach ($file in $Files)
 	$datetaken = $stryear + "-" + $strmonth + "-" + $strday
 	
 	#path pictures are copied to
-	$targetpath = "C:\Users\Allie\Pictures\PhotoMove" + "\" + $stryear + "\" + $datetaken
+	$targetpath = "*insert file path here*" + "\" + $stryear + "\" + $datetaken
    
    #if folder exists copy file into path
    #else create folder and copy into path
-	if (test-path $targetpath)
+   if (test-path $targetpath)
    {
 		copy-item $file.fullname $targetpath
 		remove-item $file.fullname
@@ -43,7 +43,7 @@ foreach ($file in $Files)
 	trap
 	{
 		#if an error occurs move picture into designated error folder
-		$FailedPicturePath = "C:\Users\Allie\Pictures\PhotoMove\FailedPictures"
+		$FailedPicturePath = "*insert file path here*"
 		copy-item $file.fullname $FailedPicturePath
 		
 		#throw message error and stop execution
@@ -52,4 +52,4 @@ foreach ($file in $Files)
 		Write-Host $_.Exception.Message
 		break
 	}
- }
+}
