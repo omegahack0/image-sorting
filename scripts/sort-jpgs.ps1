@@ -4,6 +4,12 @@
 #For JPEGs
 $Files = Get-ChildItem -recurse -filter *.JPG
 
+if($Files -eq $null) 
+{
+	write-host "No JPGs in this folder"  -ForegroundColor Yellow
+	Exit
+}
+
 foreach ($file in $Files) 
 {
 	#Access Exif data using Exiftool by Phil Harvey
@@ -14,42 +20,63 @@ foreach ($file in $Files)
 	#Get date and time photo was taken
 	$date = $meta.DateTimeOriginal
 	
-	#build Year, Month, Day
-	$stryear = $date.Substring(0, 4)
-	$strmonth = $date.Substring(5, 2)
-	$strday = $date.Substring(8, 2)
-	
-	#build folder name
-	$datetaken = $stryear + "-" + $strmonth + "-" + $strday
-	
-	#path pictures are copied to
-	$targetpath = "*insert file path here*" + "\" + $stryear + "\" + $datetaken
-   
-   #if folder exists copy file into path
-   #else create folder and copy into path
-   if (test-path $targetpath)
-   {
-		copy-item $file.fullname $targetpath
-		remove-item $file.fullname
-   }
-   else
-    {
-		new-item $targetpath -type directory
-		copy-item $file.fullname $targetpath
-		remove-item $file.fullname
-    }
-	
-	#Error handling
-	trap
+	if([string]::IsNullOrEmpty($date)) 
 	{
-		#if an error occurs move picture into designated error folder
-		$FailedPicturePath = "*insert file path here*"
-		copy-item $file.fullname $FailedPicturePath
-		
-		#throw message error and stop execution
-		Write-Host "An error has occured!"
-		Write-Host $_.ErrorID
-		Write-Host $_.Exception.Message
-		break
+		try
+		{
+			write-host $file.fullname + ": has no capture date" -ForegroundColor Red
+			$noDatePath = "insert file path here"
+			write-host "moving file to " + $noDatePath -ForegroundColor Red
+			copy-item $file.fullname $noDatePath
+			Remove-Item $file.fullname
+		}
+		catch
+		{
+			write-host "Caught an exception:" -ForegroundColor Red
+			write-host "Exception Type: $($_.Exception.GetType().FullName)" -ForegroundColor Red
+			write-host "Exception Message: $($_.Exception.Message)" -ForegroundColor Red
+		}
+	}
+	else
+	{
+		try
+		{
+			#build Year, Month, Day
+			$stryear = $date.Substring(0, 4)
+			$strmonth = $date.Substring(5, 2)
+			$strday = $date.Substring(8, 2)
+			
+			#build folder name
+			$datetaken = $stryear + "-" + $strmonth + "-" + $strday
+			
+			#path pictures are copied to
+			$targetpath = "*insert file path here*" + "\" + $stryear + "\" + $datetaken
+			
+			#if folder exists copy file into path
+			#else create folder and copy into path
+			if (test-path $targetpath)
+			{
+				copy-item $file.fullname $targetpath
+				remove-item $file.fullname
+			}
+			else
+			{
+				new-item $targetpath -type directory
+				copy-item $file.fullname $targetpath
+				remove-item $file.fullname
+			}
+			
+			write-host $file.fullname + ": moved to " + $targetpath -ForegroundColor Green
+		}
+		catch
+		{
+				$failedPicturePath = "*insert file path here*"
+				copy-item $file.fullname $failedPicturePath -ForegroundColor Red
+
+				write-host $file.fullname + ": moved to " + $failedPicturePath
+				write-host "Caught an exception:" -ForegroundColor Red
+				write-host "Exception Type: $($_.Exception.GetType().FullName)" -ForegroundColor Red
+				write-host "Exception Message: $($_.Exception.Message)" -ForegroundColor Red
+		}
 	}
  }

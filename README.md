@@ -23,11 +23,14 @@ speed at which these images will be processed.
 1. Put the chosen script into the root folder where your images reside
 2. Download the exiftool by Phil Harvey - http://www.sno.phy.queensu.ca/~phil/exiftool/
 3. Put the efixtool file in the same directory as the script
-4. On line 26 in the script, in the first part of the string, 
+4. When the date of capture is not available in the image's metadata, the file is moved to a 'no date' folder: 
+	On line 28 in the script, specify the path where these images will be moved to. For example:
+	$noDatePath = "c:\*Insert path here*\failed-sorting\no-dates"
+5. On line 53 in the script, in the first part of the string, 
 	specify which path you want the pictures saved to:
 		$targetpath = "C:\*insert file path here*" + "\" + $stryear + "\" + $datetaken
-5. If an error occurs, the image will be moved into an error folder. Specify the path to this folder
-   on line 46
+6. If an error occurs, the image will be moved into an error folder. Specify the path to this folder
+   on line 71
 		$FailedPicturePath = "C:\*Path to failed images*"
 
 ## Work in progress
