@@ -8,7 +8,6 @@ The location of the folder '2015-02-22' is determined in the script. See How to 
 It is recommended you read this document in full before using the scripts!
 
 There are two scripts currently available. One for Canon Raw images and one for Jpegs.
-Work is in progress to combine these within one script.
 
 Bear in mind these scripts have been tested on small subsets of files and are not optimized to 
 process thousands of images at once. The processing power of you computer will also determine the
